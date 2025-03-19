@@ -2,11 +2,11 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.datasets import load_iris
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+import pickle
 import time
+from sklearn.datasets import load_iris
+from sklearn.metrics import accuracy_score
+from train_model import load_trained_model
 
 # Load Iris dataset
 iris = load_iris()
@@ -15,6 +15,9 @@ df['species'] = iris.target
 
 # Map target values to species names
 df['species'] = df['species'].map({i: species for i, species in enumerate(iris.target_names)})
+
+# Load trained model
+model, X_test, y_test = load_trained_model()
 
 # Streamlit app
 def main():
@@ -25,20 +28,11 @@ def main():
     n_estimators = st.sidebar.slider("Number of Trees", 10, 200, 100)
     max_depth = st.sidebar.slider("Max Depth", 1, 10, 5)
     
-    # Split data
-    X = df[iris.feature_names]
-    y = df['species']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
     # Progress bar
     progress_bar = st.progress(0)
     for percent_complete in range(100):
         time.sleep(0.01)
         progress_bar.progress(percent_complete + 1)
-    
-    # Train model
-    model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
-    model.fit(X_train, y_train)
     
     # Make predictions
     y_pred = model.predict(X_test)
