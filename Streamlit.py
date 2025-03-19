@@ -69,7 +69,7 @@ def main():
     if st.button("Predict"):
         input_data = [[sepal_length, sepal_width, petal_length, petal_width]]
         prediction = model.predict(input_data)
-        predicted_species = iris.target_names[int(prediction[0])]
+        predicted_species = iris.target_names[model.classes_.tolist().index(prediction[0])]
         st.write(f"### Predicted Species: {predicted_species}")
 
 if __name__ == "__main__":
